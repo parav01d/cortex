@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'Flux';
 import { houseSlice } from 'Flux/Slice';
 import { useNavigate } from "react-router-dom";
+import { hasError } from 'Flux/Query';
 
 export function HouseList() {
   const loadHouses$ = useRef(new Subject<string | undefined>());
@@ -16,7 +17,7 @@ export function HouseList() {
 
   useEffect(() => {
     let subscription = loadHouses$.current.subscribe(() => {
-      dispatch(houseSlice.actions.getHouseRequest({ take: 10, page: 0 }));
+      dispatch(houseSlice.actions.getHouseRequest({ take: 10, page: 1 }));
     })
     return () => subscription.unsubscribe()
   }, [])
@@ -29,22 +30,37 @@ export function HouseList() {
   }, [])
 
   const list = useSelector((state: RootState) => state.house.list);
+  const error = useSelector(hasError(["house/getHouseFailure"]));
 
   return (
     <div className="Container">
       <h1>HouseList</h1>
-      <ul>
+      <ul className="Container__List">
         {
-          [
-            { id: "1", name: "Bungalow 1" },
-            { id: "2", name: "Bungalow 2" },
-            { id: "3", name: "Bungalow 3" },
-          ].map((house) => (
-            <li key={`${house.id}`}><Button subject$={showHouse$.current} text={house.name} value={house.id} /></li>
+          list.map((house) => (
+            <li
+              className="Container__List__Element"
+              key={`${house.id}`}>
+              <Button subject$={showHouse$.current} text={house.name} value={`${house.id}`} />
+            </li>
           ))
         }
+        <li
+          className="Container__List__Element"
+          key={"load"}>
+          <Button subject$={loadHouses$.current} text={"Load Houses"} />
+        </li>
+        {
+          error ? (
+            <li
+              className="Container__List__Element"
+              key={"error"}>
+              <p>Es ist ein Fehler aufgetreten, bitte versuchen Sie es erneut</p>
+            </li>
+          ) : null
+        }
       </ul>
-      <Button subject$={loadHouses$.current} text={"Load Houses"} />
+
     </div>
   );
 }

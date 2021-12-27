@@ -1,7 +1,7 @@
-import { findHouseEpic } from "Flux/Epic/FindHouse/FindHouseEpic";
-import { getHouseEpic } from "Flux/Epic/GetHouse/GetHouseEpic";
+import { successEpic } from "Flux/Epic/SocketResponse/SuccessEpic";
+import { failureEpic } from "Flux/Epic/SocketResponse/FailureEpic";
 
 import { combineEpics } from "redux-observable";
 
-export const rootEpic = combineEpics(findHouseEpic, getHouseEpic);
+export const rootEpic = combineEpics(failureEpic, successEpic);
 

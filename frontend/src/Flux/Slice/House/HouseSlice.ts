@@ -6,7 +6,7 @@ export interface HouseState {
   list: House[],
   total: number,
   detail: House | null,
-  error: Error | null,
+  error: string[],
 }
 
 const initialState: HouseState = {
@@ -14,7 +14,7 @@ const initialState: HouseState = {
   list: [],
   total: 0,
   detail: null,
-  error: null,
+  error: [],
 }
 
 export const houseSlice = createSlice({
@@ -22,27 +22,31 @@ export const houseSlice = createSlice({
   initialState,
   reducers: {
     findHouseRequest: (state, action: PayloadAction<{ id: string }>) => {
-      console.log("REDUCER ON: " + action.type);
+      console.log("Reduce:", action);
+      state.detail = null;
       state.isLoading = true;
+      state.error = state.error.filter((e) => e !== "house/findHouseFailure");
     },
-    findHouseFailure: (state, action: PayloadAction<{ error: Error }>) => {
-      console.log("REDUCER ON: " + action.type);
-      state.error = action.payload.error;
+    findHouseFailure: (state, action: PayloadAction<{ code: number, message: string }>) => {
+      console.log("Reduce:", action);
+      state.error = [...state.error, "house/findHouseFailure"]
     },
     findHouseSuccess: (state, action: PayloadAction<{ house: House }>) => {
-      console.log("REDUCER ON: " + action.type);
+      console.log("Reduce:", action);
       state.detail = action.payload.house
     },
     getHouseRequest: (state, action: PayloadAction<{ take: number, page: number }>) => {
-      console.log("REDUCER ON: " + action.type);
+      console.log("Reduce:", action);
+      state.list = [];
       state.isLoading = true;
+      state.error = state.error.filter((e) => e !== "house/getHouseFailure");
     },
-    getHouseFailure: (state, action: PayloadAction<{ error: Error }>) => {
-      console.log("REDUCER ON: " + action.type);
-      state.error = action.payload.error;
+    getHouseFailure: (state, action: PayloadAction<{ code: number, message: string }>) => {
+      console.log("Reduce:", action);
+      state.error = state.error = [...state.error, "house/getHouseFailure"];
     },
     getHouseSuccess: (state, action: PayloadAction<{ houses: House[], total: number }>) => {
-      console.log("REDUCER ON: " + action.type);
+      console.log("Reduce:", action);
       state.list = action.payload.houses;
       state.total = action.payload.total;
     },

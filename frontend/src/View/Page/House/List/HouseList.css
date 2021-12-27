@@ -1,3 +1,11 @@
 .Container {
   text-align: center;
 }
+
+.Container__List {
+  list-style: none;
+}
+
+.Container__List__Element {
+  margin-bottom: 5px;
+}
