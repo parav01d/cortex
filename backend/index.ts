@@ -2,7 +2,7 @@ import { WebSocketServer } from 'ws';
 
 const wss = new WebSocketServer({ port: 4004 });
 
-const houses = [...Array(1000).keys()].map((n) => ({
+const houses = [...Array(100).keys()].map((n) => ({
     id: `${n}`,
     name: `Bungalow ${n}`
 }));
@@ -35,7 +35,7 @@ wss.on('connection', (ws: any, req: any, client: any) => {
                 setTimeout(() => {
                     if (Math.random() < 0.8) {
                         ws.send(JSON.stringify({
-                            payload: { houses: houses.filter((h, i) => i > first && i < last), total: 1000 },
+                            payload: { houses: houses.filter((h, i) => i > first && i < last), total: houses.length },
                             type: "house/getHouseSuccess"
                         }))
                     } else {

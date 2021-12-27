@@ -37,7 +37,6 @@ export const houseSlice = createSlice({
     },
     getHouseRequest: (state, action: PayloadAction<{ take: number, page: number }>) => {
       console.log("Reduce:", action);
-      state.list = [];
       state.isLoading = true;
       state.error = state.error.filter((e) => e !== "house/getHouseFailure");
     },

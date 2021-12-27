@@ -1,8 +1,13 @@
 import React from 'react';
-import { Subject } from "rxjs"
+import { BehaviorSubject, Subject } from "rxjs"
 
-type ButtonProps = { subject$: Subject<string | undefined>, text: string, value?: string };
+type ButtonProps = {
+    subject$: Subject<string | undefined> | BehaviorSubject<string | undefined>,
+    text: string,
+    value?: string,
+    className?: string
+};
 
-export const Button = ({ subject$, text, value }: ButtonProps) => {
-    return <button onClick={() => subject$.next(value)}>{text}</button>
+export const Button = ({ subject$, text, value, className }: ButtonProps) => {
+    return <button className={className} onClick={() => subject$.next(value)}>{text}</button>
 }

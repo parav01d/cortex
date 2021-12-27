@@ -1,23 +1,26 @@
 import React, { useEffect, useRef } from 'react';
 import 'View/Page/House/List/HouseList.css';
 import { Button } from "View/Common";
-import { Subject } from 'rxjs';
+import { BehaviorSubject, startWith, Subject } from 'rxjs';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'Flux';
 import { houseSlice } from 'Flux/Slice';
 import { useNavigate } from "react-router-dom";
 import { hasError } from 'Flux/Query';
+import { Pagination } from 'View/Component';
 
 export function HouseList() {
-  const loadHouses$ = useRef(new Subject<string | undefined>());
+  const loadHouses$ = useRef(new BehaviorSubject<string | undefined>("1"));
   const showHouse$ = useRef(new Subject<string | undefined>());
 
   const dispatch = useDispatch()
   const navigate = useNavigate();
 
   useEffect(() => {
-    let subscription = loadHouses$.current.subscribe(() => {
-      dispatch(houseSlice.actions.getHouseRequest({ take: 10, page: 1 }));
+    let subscription = loadHouses$.current.pipe(
+      startWith("1")
+    ).subscribe((page) => {
+      dispatch(houseSlice.actions.getHouseRequest({ take: 10, page: parseInt(page!, 10) }));
     })
     return () => subscription.unsubscribe()
   }, [])
@@ -30,7 +33,8 @@ export function HouseList() {
   }, [])
 
   const list = useSelector((state: RootState) => state.house.list);
-  const error = useSelector(hasError(["house/getHouseFailure"]));
+  const error = useSelector(hasError([houseSlice.actions.getHouseFailure.type]));
+  const total = useSelector((state: RootState) => state.house.total);
 
   return (
     <div className="Container">
@@ -45,11 +49,6 @@ export function HouseList() {
             </li>
           ))
         }
-        <li
-          className="Container__List__Element"
-          key={"load"}>
-          <Button subject$={loadHouses$.current} text={"Load Houses"} />
-        </li>
         {
           error ? (
             <li
@@ -60,7 +59,7 @@ export function HouseList() {
           ) : null
         }
       </ul>
-
+      <Pagination subject$={loadHouses$.current} take={10} total={total} page={parseInt(loadHouses$.current.value!, 10)} />
     </div>
   );
 }

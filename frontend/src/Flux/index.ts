@@ -7,23 +7,17 @@ import Services from "Service";
 import { rootEpic } from "Flux/Epic";
 import { backend$ } from 'Repository';
 import { } from "Repository"; // init subscription
-import { createEpicMiddleware } from 'Service/Epic/EpicMiddleware';
+import { createEpicMiddleware } from 'Flux/Middleware/Epic/EpicMiddleware';
+import { loggerMiddleware } from './Middleware';
 
-/**
- * @Service
- * If you create a new Service then add it here
- */
 export type Dependencies = {
   PerformanceService: IPerformanceService,
 }
 
-/**
- * @Slice
- * If you create a new Slice then add State, Action-Types and Actions here
- */
 export type RootState = {
   [houseSlice.name]: HouseState;
 }
+
 export type Actions = typeof houseSlice.actions;
 export const epicMiddleware = createEpicMiddleware<
   Action,
@@ -38,21 +32,11 @@ export const epicMiddleware = createEpicMiddleware<
     action$: backend$
   });
 
-const logger = (store: any) => (next: any) => (action: any) => {
-  console.group(action.type)
-  console.info('Dispatch: ', action)
-  let result = next(action)
-  console.log('Next State: ', store.getState())
-  console.groupEnd()
-
-  return result
-}
-
 export const store = configureStore({
   reducer: { [houseSlice.name]: houseSlice.reducer },
   middleware: [
     epicMiddleware,
-    logger
+    loggerMiddleware
   ],
 })
 

@@ -1,0 +1,9 @@
+.Pagination__List {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+}
+
+.Button--Active {
+    background-color: rgb(190, 190, 255);
+}

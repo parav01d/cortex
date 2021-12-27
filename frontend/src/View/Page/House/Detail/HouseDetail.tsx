@@ -15,7 +15,7 @@ export function HouseDetail() {
   }, []);
 
   const house = useSelector((state: RootState) => state.house.detail);
-  const error = useSelector(hasError(["house/findHouseFailure"]));
+  const error = useSelector(hasError([houseSlice.actions.findHouseFailure.type]));
 
   return (
     <div className="Container">
