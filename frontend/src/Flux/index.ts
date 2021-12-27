@@ -6,6 +6,8 @@ import { Observable } from "rxjs";
 import { IPerformanceService } from "Service";
 import Services from "Service";
 import { rootEpic } from "Flux/Epic";
+import { $backend } from 'Repository/Socket/Backend';
+import { } from "Repository"; // init subscription
 
 /**
  * @Service
@@ -41,6 +43,18 @@ export const store = configureStore({
     epicMiddleware
   ],
 })
+
+
+// Monkey Patching Dispatch Method
+// Emit everything on backend$ and use the old dispatch 
+// out of an backend$ subscription.
+export const dispatch = store.dispatch;
+store.dispatch = (action) => {
+  console.log("dispatch new", action);
+  $backend.next(action);
+  return action
+}
+
 
 export type AppDispatch = typeof store.dispatch
 export type Epic = (

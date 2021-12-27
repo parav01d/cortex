@@ -1,8 +1,14 @@
-import { webSocket } from "rxjs/webSocket";
+import { Action } from "@reduxjs/toolkit";
+import { dispatch } from "Flux";
+import { $backend } from "./Socket/Backend";
 
-export const $backend = webSocket({
-    protocol: 'v1',
-    url: "ws://d3ff-2a02-810a-8c0-3972-b866-e309-a0ba-8b3.ngrok.io:4004"
+console.log("Init Backend Subscription");
+
+$backend.subscribe({
+    next: (action: Action) => {
+        console.log("Dispatch old", action)
+        dispatch(action)
+    },
+    error: console.log,
+    complete: console.log
 });
-
-$backend.subscribe(console.log);

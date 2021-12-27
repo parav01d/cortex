@@ -5,15 +5,25 @@ import { Subject } from 'rxjs';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'Flux';
 import { houseSlice } from 'Flux/Slice';
+import { useNavigate } from "react-router-dom";
 
 export function HouseList() {
-  const loadHouses$ = useRef(new Subject<void>());
-  const showHouse$ = useRef(new Subject<void>());
+  const loadHouses$ = useRef(new Subject<string | undefined>());
+  const showHouse$ = useRef(new Subject<string | undefined>());
+
   const dispatch = useDispatch()
+  const navigate = useNavigate();
 
   useEffect(() => {
     let subscription = loadHouses$.current.subscribe(() => {
       dispatch(houseSlice.actions.getHouseRequest({ take: 10, page: 0 }));
+    })
+    return () => subscription.unsubscribe()
+  }, [])
+
+  useEffect(() => {
+    let subscription = showHouse$.current.subscribe((houseId) => {
+      navigate(`/${houseId}`)
     })
     return () => subscription.unsubscribe()
   }, [])
@@ -30,7 +40,7 @@ export function HouseList() {
             { id: "2", name: "Bungalow 2" },
             { id: "3", name: "Bungalow 3" },
           ].map((house) => (
-            <li key={`${house.id}`}><Button subject$={showHouse$.current} text={house.name} /></li>
+            <li key={`${house.id}`}><Button subject$={showHouse$.current} text={house.name} value={house.id} /></li>
           ))
         }
       </ul>
