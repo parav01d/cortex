@@ -5,7 +5,7 @@ import { Observable } from "rxjs";
 import { IPerformanceService } from "Service";
 import Services from "Service";
 import { rootEpic } from "Flux/Epic";
-import { backend$ } from 'Repository/Socket/Backend';
+import { backend$ } from 'Repository';
 import { } from "Repository"; // init subscription
 import { createEpicMiddleware } from 'Service/Epic/EpicMiddleware';
 

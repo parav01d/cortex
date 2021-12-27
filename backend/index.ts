@@ -1,28 +1,65 @@
-import express from "express";
-import * as http from "http";
-import * as socketio from "socket.io";
-import { PayloadAction } from '@reduxjs/toolkit'
-import wildcard from "socketio-wildcard";
-import { hostname } from "os";
+import { WebSocketServer } from 'ws';
 
-const app = express();
-const server = http.createServer(app);
-const io = new socketio.Server(server);
-io.use(wildcard());
+const wss = new WebSocketServer({ port: 4004 });
 
 const houses = [...Array(1000).keys()].map((n) => ({
     id: `${n}`,
     name: `Bungalow ${n}`
-}))
+}));
 
-app.get('/', function (req, res) {
-    console.log('HTTP/HTTPS WORKS');
-    res.status(200).send({ success: true });
+wss.on('connection', (ws: any, req: any, client: any) => {
+    console.log("Connection Established: " + req.socket.remoteAddress);
+    ws.on('message', function message(buffer: any) {
+        const action = JSON.parse(buffer.toString());
+        console.log(action);
+        switch (action.type) {
+            case "house/findHouseRequest":
+                console.log(`Received message ${action} from user ${client}`);
+                setTimeout(() => {
+                    if (Math.random() < 0.8) {
+                        ws.send(JSON.stringify({
+                            payload: { house: houses.find((h) => h.id === action.payload.id) },
+                            type: "house/findHouseSuccess"
+                        }))
+                    } else {
+                        ws.send(JSON.stringify({
+                            payload: { code: 500, message: "SERVER ERROR" },
+                            type: "house/findHouseFailure"
+                        }))
+                    }
+                }, 1000)
+                break;
+            case "house/getHouseRequest":
+                console.log(`Received message ${action} from user ${client}`);
+                const { take, page } = action.payload;
+                const first = take * (page - 1);
+                const last = first + take;
+                setTimeout(() => {
+                    if (Math.random() < 0.8) {
+                        ws.send(JSON.stringify({
+                            payload: { houses: houses.filter((h, i) => i > first && i < last), total: 1000 },
+                            type: "house/getHouseSuccess"
+                        }))
+                    } else {
+                        ws.send(JSON.stringify({
+                            payload: { code: 500, message: "SERVER ERROR" },
+                            type: "house/getHouseFailure"
+                        }))
+                    }
+                }, 1000)
+                break;
+            default:
+                break;
+        }
+    });
 });
+
+
+
+/**
 
 io.on('connection', (socket) => {
     console.log('a user connected');
-    socket.on('*', console.log);
     socket.on('GetHouseRequest', (action: PayloadAction<{ take: number, page: number }>) => {
         const { take, page } = action.payload;
         const first = take * (page - 1);
@@ -68,3 +105,5 @@ server.listen(4004, () => {
 });
 
 console.log(hostname());
+
+ */

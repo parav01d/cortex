@@ -1,12 +1,7 @@
-import { Action } from "@reduxjs/toolkit";
-import { backend$ } from "./Socket/Backend";
+import { webSocket } from "rxjs/webSocket";
 
-console.log("Init Backend Subscription");
-
-backend$.subscribe({
-    next: (action: Action) => {
-        console.log("$backend meldet: ", action)
-    },
-    error: console.log,
-    complete: console.log
+export const backend$ = webSocket({
+    url: "ws://localhost:4004",
+    deserializer: (e: MessageEvent) => JSON.parse(e.data),
+    serializer: (value: any) => JSON.stringify(value)
 });

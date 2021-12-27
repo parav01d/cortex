@@ -22,21 +22,27 @@ export const houseSlice = createSlice({
   initialState,
   reducers: {
     findHouseRequest: (state, action: PayloadAction<{ id: string }>) => {
+      console.log("REDUCER ON: " + action.type);
       state.isLoading = true;
     },
     findHouseFailure: (state, action: PayloadAction<{ error: Error }>) => {
+      console.log("REDUCER ON: " + action.type);
       state.error = action.payload.error;
     },
     findHouseSuccess: (state, action: PayloadAction<{ house: House }>) => {
+      console.log("REDUCER ON: " + action.type);
       state.detail = action.payload.house
     },
     getHouseRequest: (state, action: PayloadAction<{ take: number, page: number }>) => {
+      console.log("REDUCER ON: " + action.type);
       state.isLoading = true;
     },
     getHouseFailure: (state, action: PayloadAction<{ error: Error }>) => {
+      console.log("REDUCER ON: " + action.type);
       state.error = action.payload.error;
     },
     getHouseSuccess: (state, action: PayloadAction<{ houses: House[], total: number }>) => {
+      console.log("REDUCER ON: " + action.type);
       state.list = action.payload.houses;
       state.total = action.payload.total;
     },
