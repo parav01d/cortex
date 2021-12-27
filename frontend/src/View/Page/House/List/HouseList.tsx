@@ -17,9 +17,7 @@ export function HouseList() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    let subscription = loadHouses$.current.pipe(
-      startWith("1")
-    ).subscribe((page) => {
+    let subscription = loadHouses$.current.subscribe((page) => {
       dispatch(houseSlice.actions.getHouseRequest({ take: 10, page: parseInt(page!, 10) }));
     })
     return () => subscription.unsubscribe()

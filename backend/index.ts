@@ -11,7 +11,7 @@ wss.on('connection', (ws: any, req: any, client: any) => {
     console.log("Connection Established: " + req.socket.remoteAddress);
     ws.on('message', function message(buffer: any) {
         const action = JSON.parse(buffer.toString());
-        console.log(action.type, JSON.stringify(action, null, 2));
+        console.log(action.type);
         switch (action.type) {
             case "house/findHouseRequest":
                 setTimeout(() => {
