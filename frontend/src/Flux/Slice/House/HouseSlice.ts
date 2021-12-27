@@ -4,6 +4,7 @@ import { House } from "Model";
 export interface HouseState {
   isLoading: boolean,
   list: House[],
+  total: number,
   detail: House | null,
   error: Error | null,
 }
@@ -11,6 +12,7 @@ export interface HouseState {
 const initialState: HouseState = {
   isLoading: false,
   list: [],
+  total: 0,
   detail: null,
   error: null,
 }
@@ -34,8 +36,9 @@ export const houseSlice = createSlice({
     getHouseFailure: (state, action: PayloadAction<{ error: Error }>) => {
       state.error = action.payload.error;
     },
-    getHouseSuccess: (state, action: PayloadAction<{ houses: House[] }>) => {
-      state.list = action.payload.houses
+    getHouseSuccess: (state, action: PayloadAction<{ houses: House[], total: number }>) => {
+      state.list = action.payload.houses;
+      state.total = action.payload.total;
     },
   },
 })

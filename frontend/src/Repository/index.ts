@@ -1,13 +1,11 @@
 import { Action } from "@reduxjs/toolkit";
-import { dispatch } from "Flux";
-import { $backend } from "./Socket/Backend";
+import { backend$ } from "./Socket/Backend";
 
 console.log("Init Backend Subscription");
 
-$backend.subscribe({
+backend$.subscribe({
     next: (action: Action) => {
-        console.log("Dispatch old", action)
-        dispatch(action)
+        console.log("$backend meldet: ", action)
     },
     error: console.log,
     complete: console.log

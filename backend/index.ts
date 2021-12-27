@@ -30,7 +30,7 @@ io.on('connection', (socket) => {
         setTimeout(() => {
             if (Math.random() < 0.8) {
                 socket.emit('GetHouseSuccess', {
-                    payload: { houses: houses.filter((h, i) => i > first && i < last) },
+                    payload: { houses: houses.filter((h, i) => i > first && i < last), total: 1000 },
                     type: "FindHouseSuccess"
                 })
             } else {

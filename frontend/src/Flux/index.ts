@@ -1,13 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { houseSlice, HouseState } from "Flux/Slice";
-import { createEpicMiddleware } from "redux-observable";
 import { Action } from "@reduxjs/toolkit";
 import { Observable } from "rxjs";
 import { IPerformanceService } from "Service";
 import Services from "Service";
 import { rootEpic } from "Flux/Epic";
-import { $backend } from 'Repository/Socket/Backend';
+import { backend$ } from 'Repository/Socket/Backend';
 import { } from "Repository"; // init subscription
+import { createEpicMiddleware } from 'Service/Epic/EpicMiddleware';
 
 /**
  * @Service
@@ -35,6 +35,7 @@ export const epicMiddleware = createEpicMiddleware<
       PerformanceService: Services.PerformanceService,
       ...houseSlice.actions
     },
+    action$: backend$
   });
 
 export const store = configureStore({
@@ -43,18 +44,6 @@ export const store = configureStore({
     epicMiddleware
   ],
 })
-
-
-// Monkey Patching Dispatch Method
-// Emit everything on backend$ and use the old dispatch 
-// out of an backend$ subscription.
-export const dispatch = store.dispatch;
-store.dispatch = (action) => {
-  console.log("dispatch new", action);
-  $backend.next(action);
-  return action
-}
-
 
 export type AppDispatch = typeof store.dispatch
 export type Epic = (
